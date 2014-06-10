@@ -24,12 +24,22 @@ function arvererInit(c) {
 		if (messageEvent.data == 'demat') {
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
+			addEventListener('resize', windowResize);
 		} else if (messageEvent.data == 'kenavo') {
 			removeEventListener('mousemove', mouseMove);
 			removeEventListener('click', mouseClick);
+			removeEventListener('resize', windowResize);
 		} else {
 			console.log(messageEvent.data)
 		}
+	};
+	arverer.onclose = function(event) {
+		console.log("onClose");
+		console.log(event);
+	};
+	arverer.onerror = function(event) {
+		console.log("onError");
+		console.log(event);
 	};
 	var sendAction = function(action, x, y) {
 		arverer.send(JSON.stringify({
@@ -45,5 +55,11 @@ function arvererInit(c) {
 
 	var mouseClick = function(mouseEvent) {
 		sendAction('click', mouseEvent.x, mouseEvent.y);
+	};
+	var windowResize = function(uiEvent) {
+		var body = document.body, html = document.documentElement;
+		var height = Math.max(body.clientHeight, html.clientHeight);
+		var width = Math.max(body.clientWidth, html.clientWidth);
+		sendAction('resize', height, width);
 	};
 }
