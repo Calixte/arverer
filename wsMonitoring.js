@@ -19,12 +19,31 @@ function checkConfig(config) {
 function arvererInit(c) {
 	var config = checkConfig(c);
 	var url = (config.secure ? 'wss' : 'ws') + '://' + config.host + ':' + config.port + config.path;
-    var arverer = new WebSocket(url);
-	arverer.onmessage = function(event) {
-		
+	var arverer = new WebSocket(url);
+	arverer.onmessage = function(messageEvent) {
+		if (messageEvent.data == 'demat') {
+			addEventListener('mousemove', mouseMove);
+			addEventListener('click', mouseClick);
+		} else if (messageEvent.data == 'kenavo') {
+			removeEventListener('mousemove', mouseMove);
+			removeEventListener('click', mouseClick);
+		} else {
+			console.log(messageEvent.data)
+		}
 	};
-	arverer.sendMousePosition = function(mouseEvent) {
-		arverer.send(JSON.stringify({x:mouseEvent.x, y:mouseEvent.y}));
+	var sendAction = function(action, x, y) {
+		arverer.send(JSON.stringify({
+			action: action,
+			x: x,
+			y: y
+		}));
 	};
-	addEventListener('mousemove', arverer.sendMousePosition)
+
+	var mouseMove = function(mouseEvent) {
+		sendAction('move', mouseEvent.x, mouseEvent.y);
+	};
+
+	var mouseClick = function(mouseEvent) {
+		sendAction('click', mouseEvent.x, mouseEvent.y);
+	};
 }
