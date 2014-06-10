@@ -22,6 +22,7 @@ function arvererInit(c) {
 	var arverer = new WebSocket(url);
 	arverer.onmessage = function(messageEvent) {
 		if (messageEvent.data == 'demat') {
+			windowResize();
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
 			addEventListener('resize', windowResize);
@@ -56,10 +57,11 @@ function arvererInit(c) {
 	var mouseClick = function(mouseEvent) {
 		sendAction('click', mouseEvent.x, mouseEvent.y);
 	};
-	var windowResize = function(uiEvent) {
+	var windowResize = function() {
 		var body = document.body, html = document.documentElement;
 		var height = Math.max(body.clientHeight, html.clientHeight);
 		var width = Math.max(body.clientWidth, html.clientWidth);
-		sendAction('resize', height, width);
+		console.log('a');
+		sendAction('resize', width, height);
 	};
 }
