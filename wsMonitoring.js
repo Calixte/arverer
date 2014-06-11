@@ -40,7 +40,7 @@ function arvererInit(c) {
 			removeEventListener('click', mouseClick);
 			removeEventListener('resize', windowResize);
 			removeEventListener('mouseout', mouseOut);
-			addEventListener('mouseover', mouseOver);
+			removeEventListener('mouseover', mouseOver);
 		} else if(messageEvent.data == 'enrollan') {
 			windowResize();
 			sendContent();
@@ -50,12 +50,13 @@ function arvererInit(c) {
 		}
 	};
 	arverer.onclose = function(event) {
-		console.log("onClose");
-		console.log(event);
-	};
-	arverer.onerror = function(event) {
-		console.log("onError");
-		console.log(event);
+		stopMutationObserver();
+		stopInputObserver();
+		removeEventListener('mousemove', mouseMove);
+		removeEventListener('click', mouseClick);
+		removeEventListener('resize', windowResize);
+		removeEventListener('mouseout', mouseOut);
+		removeEventListener('mouseover', mouseOver);
 	};
 	var mo;
 	var initMutationObserver = function() {
@@ -109,7 +110,6 @@ function arvererInit(c) {
 		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].addEventListener('keypress', inputChange);
 			inputs[i].addEventListener('keyup', inputChange);
-//			inputs[i].addEventListener('drop', inputChange);
 			inputs[i].addEventListener('focus', inputFocus);
 			inputs[i].addEventListener('blur', inputBlur);
 		}
@@ -119,7 +119,8 @@ function arvererInit(c) {
 		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].removeEventListener('keypress', inputChange);
 			inputs[i].removeEventListener('keyup', inputChange);
-//			inputs[i].removeEventListener('drag', inputChange);
+			inputs[i].removeEventListener('focus', inputFocus);
+			inputs[i].removeEventListener('blur', inputBlur);
 		}
 	};
 	var sendCoord = function(action, x, y) {
