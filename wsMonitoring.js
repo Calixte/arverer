@@ -26,6 +26,7 @@ function arvererInit(c) {
 			sendContent();
 			initMutationObserver();
 			initInputObserver();
+			inputChange();
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
 			addEventListener('resize', windowResize);
@@ -33,6 +34,7 @@ function arvererInit(c) {
 			addEventListener('mouseover', mouseOver);
 		} else if (messageEvent.data == 'kenavo') {
 			stopMutationObserver();
+			stopInputObserver();
 			removeEventListener('mousemove', mouseMove);
 			removeEventListener('click', mouseClick);
 			removeEventListener('resize', windowResize);
@@ -69,11 +71,18 @@ function arvererInit(c) {
 	var inputChange = function(event) {
 		var inputs = document.querySelectorAll('input');
 		for (var i = 0; i < inputs.length; i++) {
-			if (inputs[i] == event.target) {
+			if (event && inputs[i] == event.target) {
 				arverer.send(JSON.stringify({
 					action: 'input',
 					i: i,
-					value: event.target.value
+					value: inputs[i].value
+				}));
+				return;
+			} else if (event == undefined) {
+				arverer.send(JSON.stringify({
+					action: 'input',
+					i: i,
+					value: inputs[i].value
 				}));
 			}
 		}
@@ -83,9 +92,15 @@ function arvererInit(c) {
 		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].addEventListener('keypress', inputChange);
 			inputs[i].addEventListener('keyup', inputChange);
-			inputs[i].addEventListener('change', inputChange);
-			inputs[i].addEventListener('drop', inputChange);
-
+			inputs[i].addEventListener('drag', inputChange);
+		}
+	};
+	var stopInputObserver = function() {
+		var inputs = document.querySelectorAll('input');
+		for (var i = 0; i < inputs.length; i++) {
+			inputs[i].removeEventListener('keypress', inputChange);
+			inputs[i].removeEventListener('keyup', inputChange);
+			inputs[i].removeEventListener('drag', inputChange);
 		}
 	};
 	var sendCoord = function(action, x, y) {
