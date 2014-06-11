@@ -25,6 +25,7 @@ function arvererInit(c) {
 			windowResize();
 			sendContent();
 			initMutationObserver();
+			initInputObserver();
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
 			addEventListener('resize', windowResize);
@@ -65,7 +66,28 @@ function arvererInit(c) {
 	var stopMutationObserver = function() {
 		mo.disconnect();
 	};
-	initMutationObserver();
+	var inputChange = function(event) {
+		var inputs = document.querySelectorAll('input');
+		for (var i = 0; i < inputs.length; i++) {
+			if (inputs[i] == event.target) {
+				arverer.send(JSON.stringify({
+					action: 'input',
+					i: i,
+					value: event.target.value
+				}));
+			}
+		}
+	};
+	var initInputObserver = function() {
+		var inputs = document.querySelectorAll('input');
+		for (var i = 0; i < inputs.length; i++) {
+			inputs[i].addEventListener('keypress', inputChange);
+			inputs[i].addEventListener('keyup', inputChange);
+			inputs[i].addEventListener('change', inputChange);
+			inputs[i].addEventListener('drop', inputChange);
+
+		}
+	};
 	var sendCoord = function(action, x, y) {
 		arverer.send(JSON.stringify({
 			action: action,
