@@ -27,6 +27,7 @@ function arvererInit(c) {
 			initMutationObserver();
 			initInputObserver();
 			inputChange();
+			inputFocus();
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
 			addEventListener('resize', windowResize);
@@ -72,27 +73,42 @@ function arvererInit(c) {
 		var inputs = document.querySelectorAll('input');
 		for (var i = 0; i < inputs.length; i++) {
 			if (event && inputs[i] == event.target) {
-				arverer.send(JSON.stringify({
-					action: 'input',
+				sendAction('input', {
 					i: i,
 					value: inputs[i].value
-				}));
+				});
 				return;
 			} else if (event == undefined) {
-				arverer.send(JSON.stringify({
-					action: 'input',
+				sendAction('input', {
 					i: i,
 					value: inputs[i].value
-				}));
+				});
 			}
 		}
+	};
+	var inputFocus = function() {
+		var inputs = document.querySelectorAll('input');
+		for (var i = 0; i < inputs.length; i++) {
+			if (event && inputs[i] == event.target) {
+				sendAction('focus', {i: i});
+				return;
+			} else if (event == undefined && inputs[i] == document.activeElement) {
+				sendAction('focus', {i: i});
+				return;
+			}
+		}
+	};
+	var inputBlur = function() {
+		sendAction('blur');
 	};
 	var initInputObserver = function() {
 		var inputs = document.querySelectorAll('input');
 		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].addEventListener('keypress', inputChange);
 			inputs[i].addEventListener('keyup', inputChange);
-			inputs[i].addEventListener('drag', inputChange);
+//			inputs[i].addEventListener('drop', inputChange);
+			inputs[i].addEventListener('focus', inputFocus);
+			inputs[i].addEventListener('blur', inputBlur);
 		}
 	};
 	var stopInputObserver = function() {
@@ -100,21 +116,19 @@ function arvererInit(c) {
 		for (var i = 0; i < inputs.length; i++) {
 			inputs[i].removeEventListener('keypress', inputChange);
 			inputs[i].removeEventListener('keyup', inputChange);
-			inputs[i].removeEventListener('drag', inputChange);
+//			inputs[i].removeEventListener('drag', inputChange);
 		}
 	};
 	var sendCoord = function(action, x, y) {
-		arverer.send(JSON.stringify({
-			action: action,
+		sendAction(action, {
 			x: x,
 			y: y
-		}));
+		});
 	};
-	var sendData = function(action, data) {
-		arverer.send(JSON.stringify({
-			action: action,
-			data: data
-		}));
+	var sendAction = function(action, obj) {
+		obj = obj || {};
+		obj.action = action;
+		arverer.send(JSON.stringify(obj));
 	};
 	var mouseMove = function(mouseEvent) {
 		sendCoord('move', mouseEvent.x, mouseEvent.y);
@@ -130,13 +144,13 @@ function arvererInit(c) {
 		sendCoord('resize', width, height);
 	};
 	var mouseOut = function() {
-		sendData('out');
+		sendAction('out');
 	};
 	var mouseOver = function() {
-		sendData('over');
+		sendAction('over');
 	};
 	var sendContent = function() {
-		sendData('content', document.documentElement.innerHTML);
+		sendAction('content', {data: document.documentElement.innerHTML});
 	}
 }
 function disable() {
