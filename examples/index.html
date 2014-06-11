@@ -7,5 +7,24 @@
 </head>
 <body>
 <h1>My title</h1>
+<label>
+	My input
+	<input>
+</label>
+<br>
+<button onclick="toggle()">Do NOT click here</button>
+<div id="container"></div>
+<script>
+	var cont = document.getElementById('container');
+			function toggle() {
+				if (cont.firstChild) {
+					cont.removeChild(cont.firstChild);
+				} else {
+					var img = document.createElement('img');
+					img.src = 'https://media.giphy.com/media/sIIhZliB2McAo/giphy.gif';
+					cont.appendChild(img);
+				}
+			}
+</script>
 </body>
 </html>
