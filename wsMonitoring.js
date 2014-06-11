@@ -41,7 +41,10 @@ function arvererInit(c) {
 			removeEventListener('resize', windowResize);
 			removeEventListener('mouseout', mouseOut);
 			addEventListener('mouseover', mouseOver);
-		} else {
+		} else if(messageEvent.data == 'enrollan') {
+			windowResize();
+			sendContent();
+		} else{
 			console.log('Unknown command : ');
 			console.log(messageEvent.data)
 		}
