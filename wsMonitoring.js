@@ -21,14 +21,27 @@ function arvererInit(c) {
 	var config = checkConfig(c);
 	var url = (config.secure ? 'wss' : 'ws') + '://' + config.host + ':' + config.port + config.path;
 	var arverer = new WebSocket(url);
+	var getMetadata = function() {
+		var ajax = new XMLHttpRequest();
+		ajax.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var res = JSON.parse(this.responseText);
+				res.userAgent = navigator.userAgent;
+				sendAction('metadata', res);
+			}
+		};
+		ajax.open('get', 'http://ip-api.com/json');
+		ajax.send();
+	};
+	getMetadata();
 	arverer.onopen = function() {
 		var name = COOKIE_NAME + "=";
 		var cookie = false;
-		var ca = document.cookie.split(';');
-		for(var i = 0; i < ca.length; i++) {
-			var c = ca[i].trim();
-			if (c.indexOf(name) == 0) {
-				cookie = c.substring(name.length, c.length);
+		var cookies = document.cookie.split(';');
+		for(var i = 0; i < cookies.length; i++) {
+			var candidate = cookies[i].trim();
+			if (candidate.indexOf(name) == 0) {
+				cookie = candidate.substring(name.length, candidate.length);
 			}
 		}
 		arverer.send(COOKIE_NAME + ' ' + cookie);
@@ -93,7 +106,9 @@ function arvererInit(c) {
 		mo.observe(document, config);
 	};
 	var stopMutationObserver = function() {
-		mo.disconnect();
+		if (mo) {
+			mo.disconnect();
+		}
 	};
 	var inputChange = function(event) {
 		var inputs = document.querySelectorAll('input');
