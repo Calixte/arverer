@@ -24,10 +24,10 @@ function arvererInit(c) {
 		if (messageEvent.data == 'demat') {
 			windowResize();
 			sendContent();
-			initMutationObserver();
-			initInputObserver();
 			inputChange();
 			inputFocus();
+			initMutationObserver();
+			initInputObserver();
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
 			addEventListener('resize', windowResize);
@@ -44,6 +44,8 @@ function arvererInit(c) {
 		} else if(messageEvent.data == 'enrollan') {
 			windowResize();
 			sendContent();
+			inputChange();
+			inputFocus();
 		} else{
 			console.log('Unknown command : ');
 			console.log(messageEvent.data)
@@ -64,6 +66,8 @@ function arvererInit(c) {
 			mutations.forEach(function(mutation) {
 				if (arverer.readyState == arverer.OPEN) {
 					sendContent();
+					inputChange();
+					inputFocus();
 				}
 			})
 		});
@@ -131,6 +135,7 @@ function arvererInit(c) {
 	};
 	var sendAction = function(action, obj) {
 		obj = obj || {};
+		obj.date = new Date().getTime();
 		obj.action = action;
 		arverer.send(JSON.stringify(obj));
 	};
