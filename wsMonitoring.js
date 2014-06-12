@@ -27,7 +27,7 @@ function arvererInit(c) {
 			if (this.readyState == 4 && this.status == 200) {
 				var res = JSON.parse(this.responseText);
 				res.userAgent = navigator.userAgent;
-				send('metadata' + JSON.stringify(res));
+				arverer.send('titourou' + JSON.stringify(res));
 			}
 		};
 		ajax.open('get', 'http://ip-api.com/json');
