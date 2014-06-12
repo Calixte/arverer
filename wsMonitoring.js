@@ -17,9 +17,22 @@ function checkConfig(config) {
 	return config;
 }
 function arvererInit(c) {
+	var COOKIE_NAME = 'koun';
 	var config = checkConfig(c);
 	var url = (config.secure ? 'wss' : 'ws') + '://' + config.host + ':' + config.port + config.path;
-	arverer = new WebSocket(url);
+	var arverer = new WebSocket(url);
+	arverer.onopen = function() {
+		var name = COOKIE_NAME + "=";
+		var cookie = false;
+		var ca = document.cookie.split(';');
+		for(var i = 0; i < ca.length; i++) {
+			var c = ca[i].trim();
+			if (c.indexOf(name) == 0) {
+				cookie = c.substring(name.length, c.length);
+			}
+		}
+		arverer.send(COOKIE_NAME + ' ' + cookie);
+	};
 	arverer.onmessage = function(messageEvent) {
 		if (messageEvent.data == 'demat') {
 			windowResize();
@@ -46,7 +59,12 @@ function arvererInit(c) {
 			sendContent();
 			inputChange();
 			inputFocus();
-		} else{
+		} else if (messageEvent.data.indexOf(COOKIE_NAME) == 0) {
+			var id = messageEvent.data.substr(5);
+			var d = new Date(8640000000000000);
+			var expires = "expires="+d.toGMTString();
+			document.cookie = COOKIE_NAME + "=" + id + "; " + expires;
+		} else {
 			console.log('Unknown command : ');
 			console.log(messageEvent.data)
 		}
