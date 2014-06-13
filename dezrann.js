@@ -58,9 +58,11 @@ function arvererInit(c) {
 			windowResize();
 			sendContent();
 			inputChange();
+			selectFocus();
 			inputFocus();
 			initMutationObserver();
 			initInputObserver();
+			initSelectObserver();
 			addEventListener('mousemove', mouseMove);
 			addEventListener('click', mouseClick);
 			addEventListener('resize', windowResize);
@@ -95,7 +97,7 @@ function arvererInit(c) {
 		removeEventListener('mousemove', mouseMove);
 		removeEventListener('click', mouseClick);
 		removeEventListener('resize', windowResize);
-		removeEventListener('mouseout', mouseOut);6
+		removeEventListener('mouseout', mouseOut);
 		removeEventListener('mouseover', mouseOver);
 	};
 	var mo;
@@ -108,8 +110,8 @@ function arvererInit(c) {
 						sendAction('attrChange', {
 							index: getElementIndex(mutation.target),
 							tagName: mutation.target.localName,
-                            attrName: parent.innerHTML,
-
+                            attrName: mutation,
+							//attrValue: mutation.target[]
 						});
 					} else {
                         var parent = mutation.target.parentNode;
@@ -160,6 +162,36 @@ function arvererInit(c) {
 				sendAction('focus', {i: i});
 				return;
 			}
+		}
+	};
+	var selectFocus = function(event) {
+		var selects = document.querySelectorAll('select');
+		for (var i = 0; i < selects.length; i++) {
+			if (event && selects[i] == event.target) {
+				sendAction('focusSelect', {i: i});
+				return;
+			} else if (event == undefined && selects[i] == document.activeElement) {
+				sendAction('focusSelect', {i: i});
+				return;
+			}
+		}
+	};
+	var selectChange = function(event) {
+		var selects = document.querySelectorAll('select');
+		for (var i = 0; i < selects.length; i++) {
+			if (event && selects[i] == event.target) {
+				sendAction('valueSelect', {i: i, value: selects[i].value});
+				return;
+			} else if (event == undefined) {
+				sendAction('valueSelect', {i: i, value: selects[i].value});
+			}
+		}
+	};
+	var initSelectObserver = function() {
+		var selects = document.querySelectorAll('select');
+		for (var i = 0; i < selects.length; i++) {
+			selects[i].addEventListener('mousedown', selectFocus);
+			selects[i].addEventListener('change', selectChange);
 		}
 	};
 	var inputBlur = function() {
