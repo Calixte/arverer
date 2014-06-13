@@ -104,17 +104,22 @@ function arvererInit(c) {
 			mutations.forEach(function(mutation) {
 				if (arverer.readyState == arverer.OPEN) {
                     console.log(mutation);
-					console.log(mutation.target);
-					var parent = mutation.target.parentNode;
-//					if (mutation.type = "attributes") {
-						sendAction('domChange', {
-							index: getElementIndex(parent),
-							tagName: parent.localName,
-							innerHTML: parent.innerHTML
+					if (mutation.type = "attributes") {
+						sendAction('attrChange', {
+							index: getElementIndex(mutation.target),
+							tagName: mutation.target.localName,
+                            attrName: parent.innerHTML,
+
 						});
-//					} else {
+					} else {
+                        var parent = mutation.target.parentNode;
+                        sendAction('domChange', {
+                            index: getElementIndex(parent),
+                            tagName: parent.localName,
+                            innerHTML: parent.innerHTML
+                        });
 //						sendContent();
-//					}
+					}
 					inputChange();
 					inputFocus();
 				}
