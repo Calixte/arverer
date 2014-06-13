@@ -1,6 +1,6 @@
 function checkConfig(config) {
 	if (config == undefined) {
-		config = {}
+		config = {};
 	}
 	if (config.host == undefined) {
 		config.host = location.hostname;
@@ -86,7 +86,7 @@ function arvererInit(c) {
 			document.cookie = COOKIE_NAME + "=" + id + "; " + expires;
 		} else {
 			console.log('Unknown command : ');
-			console.log(messageEvent.data)
+			console.log(messageEvent.data);
 		}
 	};
 	arverer.onclose = function(event) {
@@ -95,7 +95,7 @@ function arvererInit(c) {
 		removeEventListener('mousemove', mouseMove);
 		removeEventListener('click', mouseClick);
 		removeEventListener('resize', windowResize);
-		removeEventListener('mouseout', mouseOut);
+		removeEventListener('mouseout', mouseOut);6
 		removeEventListener('mouseover', mouseOver);
 	};
 	var mo;
@@ -103,6 +103,7 @@ function arvererInit(c) {
 		mo = new MutationObserver(function(mutations) {
 			mutations.forEach(function(mutation) {
 				if (arverer.readyState == arverer.OPEN) {
+                    console.log(mutation);
 					console.log(mutation.target);
 					var parent = mutation.target.parentNode;
 //					if (mutation.type = "attributes") {
