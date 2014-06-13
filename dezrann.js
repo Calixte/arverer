@@ -103,16 +103,17 @@ function arvererInit(c) {
 		mo = new MutationObserver(function(mutations) {
 			mutations.forEach(function(mutation) {
 				if (arverer.readyState == arverer.OPEN) {
-					if (mutation.type = "attributes") {
-						sendAction('attrChange', {
-							index: getElementIndex(mutation.target),
-							tagName: mutation.target.localName,
-							attrName: mutation.attributeName,
-							attrValue: JSON.stringify(mutation.target[mutation.attributeName])
+					console.log(mutation.target);
+					var parent = mutation.target.parentNode;
+//					if (mutation.type = "attributes") {
+						sendAction('domChange', {
+							index: getElementIndex(parent),
+							tagName: parent.localName,
+							innerHTML: parent.innerHTML
 						});
-					} else {
-						sendContent();
-					}
+//					} else {
+//						sendContent();
+//					}
 					inputChange();
 					inputFocus();
 				}
@@ -210,7 +211,7 @@ function arvererInit(c) {
 	};
 	var sendContent = function() {
 		sendAction('content', {data: document.documentElement.innerHTML});
-	}
+	};
 }
 function disable() {
 	console.log('disable');
