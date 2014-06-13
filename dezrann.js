@@ -103,7 +103,16 @@ function arvererInit(c) {
 		mo = new MutationObserver(function(mutations) {
 			mutations.forEach(function(mutation) {
 				if (arverer.readyState == arverer.OPEN) {
-					sendContent();
+					if (mutation.type = "attributes") {
+						sendAction('attrChange', {
+							index: getElementIndex(mutation.target),
+							tagName: mutation.target.localName,
+							attrName: mutation.attributeName,
+							attrValue: JSON.stringify(mutation.target[mutation.attributeName])
+						});
+					} else {
+						sendContent();
+					}
 					inputChange();
 					inputFocus();
 				}
@@ -177,6 +186,7 @@ function arvererInit(c) {
 		obj = obj || {};
 		obj.date = new Date().getTime();
 		obj.action = action;
+//		console.log(JSON.stringify(obj));
 		arverer.send(JSON.stringify(obj));
 	};
 	var mouseMove = function(mouseEvent) {
@@ -204,4 +214,13 @@ function arvererInit(c) {
 }
 function disable() {
 	console.log('disable');
+}
+function getElementIndex(elem) {
+	var elems = document.querySelectorAll(elem.localName);
+	for (var i = 0; i < elems.length; i++) {
+		if (elem == elems[i]) {
+			return i;
+		}
+	}
+	return -1;
 }
