@@ -19,6 +19,7 @@ function checkConfig(config) {
 function arvererInit(c) {
 	var COOKIE_NAME = 'koun';
 	var config = checkConfig(c);
+    var titourouString;
 	var url = (config.secure ? 'wss' : 'ws') + '://' + config.host + ':' + config.port + config.path;
 	var arverer = new WebSocket(url);
 	var getMetadata = function() {
@@ -27,7 +28,10 @@ function arvererInit(c) {
 			if (this.readyState == 4 && this.status == 200) {
 				var res = JSON.parse(this.responseText);
 				res.userAgent = navigator.userAgent;
-				arverer.send('titourou' + JSON.stringify(res));
+                titourouString = 'titourou' + JSON.stringify(res);
+                if (arverer.readyState == arverer.OPEN) {
+                    arverer.send(titourouString);
+                }
 			}
 		};
 		ajax.open('get', 'http://ip-api.com/json');
@@ -45,6 +49,9 @@ function arvererInit(c) {
 			}
 		}
 		arverer.send(COOKIE_NAME + cookie);
+        if (titourouString) {
+            arverer.send(titourouString);
+        }
 	};
 	arverer.onmessage = function(messageEvent) {
 		if (messageEvent.data == 'demat') {
